@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -18,7 +19,7 @@ func main() {
 	fileScanner := bufio.NewScanner(inputFile)
 	fileScanner.Split(bufio.ScanLines)
 
-	var maxTotal int = 0
+	var totals []int
 	var currentTotal int = 0
 
 	for fileScanner.Scan() {
@@ -31,9 +32,7 @@ func main() {
 				currentTotal += lineValue
 			}
 		} else {
-			if currentTotal > maxTotal {
-				maxTotal = currentTotal
-			}
+			totals = append(totals, currentTotal)
 
 			currentTotal = 0
 		}
@@ -41,5 +40,9 @@ func main() {
 
 	inputFile.Close()
 
-	fmt.Print(maxTotal)
+	sort.Slice(totals, func(a, b int) bool {
+		return totals[a] > totals[b]
+	})
+
+	fmt.Print(totals[0] + totals[1] + totals[2])
 }
