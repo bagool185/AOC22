@@ -7,7 +7,7 @@ import (
 )
 
 func ReadTestFile(fileName string) *os.File {
-	var filePath = filepath.Join("./test_data", fileName)
+	var filePath, _ = filepath.Abs(filepath.Join("./test_data", fileName))
 	inputFile, err := os.Open(filePath)
 
 	if err != nil {
