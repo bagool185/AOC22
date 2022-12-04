@@ -1,21 +1,16 @@
 package main
 
 import (
+	common "aoc23/main"
 	"bufio"
 	"fmt"
-	"os"
 	"sort"
 	"strconv"
 )
 
 func main() {
 
-	inputFile, err := os.Open("./day1_input.txt")
-
-	if err != nil {
-		fmt.Printf("bronk AAAAAAAAAAAA\n%s", err)
-	}
-
+	var inputFile = common.ReadTestFile("day1_input.txt")
 	fileScanner := bufio.NewScanner(inputFile)
 	fileScanner.Split(bufio.ScanLines)
 
