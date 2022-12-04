@@ -68,5 +68,7 @@ func main() {
 		}
 	}
 
+	inputFile.Close()
+
 	fmt.Print(total)
 }
