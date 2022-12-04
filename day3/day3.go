@@ -44,6 +44,7 @@ func part1(inputFile *os.File) {
 	}
 
 	fmt.Printf("Part 1: total %d\n", total)
+	inputFile.Close()
 }
 
 func dedupeRunes(text string) string {
@@ -88,13 +89,11 @@ func part2(inputFile *os.File) {
 	}
 
 	fmt.Printf("Part 2: total %d\n", total)
+	inputFile.Close()
 }
 
 func main() {
-	var inputFile = common.ReadTestFile("day3_input.txt")
+	part1(common.ReadTestFile("day3_input.txt"))
 
-	// part1(inputFile)
-	part2(inputFile)
-
-	inputFile.Close()
+	part2(common.ReadTestFile("day3_input.txt"))
 }
