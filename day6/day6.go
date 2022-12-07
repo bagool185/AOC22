@@ -35,7 +35,7 @@ func main() {
 
 		crtMarkerCandidate = append(crtMarkerCandidate, rune(char[0]))
 
-		if len(crtMarkerCandidate) > 4 {
+		if len(crtMarkerCandidate) > 14 {
 			crtMarkerCandidate = crtMarkerCandidate[1:]
 
 			if isMarker(string(crtMarkerCandidate)) {
