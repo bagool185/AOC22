@@ -45,7 +45,7 @@ func sanitise(elem string) string {
 	return garboCharsRe.ReplaceAllString(elem, "")
 }
 
-func move(stacks []Deque, crates int, fromStack int, toStack int) []Deque {
+func movePartOne(stacks []Deque, crates int, fromStack int, toStack int) []Deque {
 
 	for ; crates > 0; crates-- {
 		if !stacks[fromStack].isEmpty() {
@@ -53,6 +53,23 @@ func move(stacks []Deque, crates int, fromStack int, toStack int) []Deque {
 			stacks[toStack].pushBack(pop)
 		}
 	}
+
+	return stacks
+}
+
+func prettyPrint(stacks []Deque) {
+	for index, stack := range stacks {
+		fmt.Printf("Stack %d %s\n", index, stack.elements)
+	}
+}
+
+func movePartTwo(stacks []Deque, crates int, fromStack int, toStack int) []Deque {
+
+	length := len(stacks[fromStack].elements)
+	cratesToMove := stacks[fromStack].elements[length-crates:]
+
+	stacks[fromStack].elements = stacks[fromStack].elements[:length-crates]
+	stacks[toStack].elements = append(stacks[toStack].elements, cratesToMove...)
 
 	return stacks
 }
@@ -68,6 +85,8 @@ func main() {
 	whitespaceRe := regexp.MustCompile("\\s{4}|\\s{1}")
 	digitsRe := regexp.MustCompile("\\d")
 	moveRe := regexp.MustCompile("move (\\d+) from (\\d+) to (\\d+)")
+
+	isPartOne := false
 
 	for fileScanner.Scan() {
 		line := fileScanner.Text()
@@ -91,12 +110,20 @@ func main() {
 				fromStack, _ := strconv.Atoi(matchingGroups[2])
 				toStack, _ := strconv.Atoi(matchingGroups[3])
 
-				stacks = move(stacks, crates, fromStack-1, toStack-1)
+				if isPartOne {
+					stacks = movePartOne(stacks, crates, fromStack-1, toStack-1)
+				} else {
+					stacks = movePartTwo(stacks, crates, fromStack-1, toStack-1)
+				}
 			}
 		}
 	}
 
+	prettyPrint(stacks)
+
 	for _, stack := range stacks {
-		fmt.Printf("%s", stack.top())
+		if !stack.isEmpty() {
+			fmt.Printf("%s", stack.top())
+		}
 	}
 }
