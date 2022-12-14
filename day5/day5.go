@@ -13,9 +13,13 @@ type Deque struct {
 }
 
 func (s *Deque) removeLast() string {
-	lastElem := s.elements[len(s.elements)-1]
-	s.elements = s.elements[:len(s.elements)-1]
-	return lastElem
+	return s.removeLastN(1)[0]
+}
+
+func (s *Deque) removeLastN(n int) []string {
+	removedElements := s.elements[len(s.elements)-n:]
+	s.elements = s.elements[:len(s.elements)-n]
+	return removedElements
 }
 
 func (s *Deque) removeFirst() string {
@@ -29,7 +33,11 @@ func (s *Deque) pushFront(elem string) {
 }
 
 func (s *Deque) pushBack(elem string) {
-	s.elements = append(s.elements, elem)
+	s.pushBackMultiple([]string{elem})
+}
+
+func (s *Deque) pushBackMultiple(elems []string) {
+	s.elements = append(s.elements, elems...)
 }
 
 func (s *Deque) top() string {
@@ -64,12 +72,8 @@ func prettyPrint(stacks []Deque) {
 }
 
 func movePartTwo(stacks []Deque, crates int, fromStack int, toStack int) []Deque {
-
-	length := len(stacks[fromStack].elements)
-	cratesToMove := stacks[fromStack].elements[length-crates:]
-
-	stacks[fromStack].elements = stacks[fromStack].elements[:length-crates]
-	stacks[toStack].elements = append(stacks[toStack].elements, cratesToMove...)
+	cratesToMove := stacks[fromStack].removeLastN(crates)
+	stacks[toStack].pushBackMultiple(cratesToMove)
 
 	return stacks
 }
@@ -118,8 +122,6 @@ func main() {
 			}
 		}
 	}
-
-	prettyPrint(stacks)
 
 	for _, stack := range stacks {
 		if !stack.isEmpty() {
