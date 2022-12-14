@@ -8,29 +8,35 @@ import (
 	"strconv"
 )
 
-type Stack struct {
+type Deque struct {
 	elements []string
 }
 
-func (s *Stack) pop() string {
-	lastElem := s.elements[0]
-	s.elements = s.elements[1:len(s.elements)]
+func (s *Deque) removeLast() string {
+	lastElem := s.elements[len(s.elements)-1]
+	s.elements = s.elements[:len(s.elements)-1]
 	return lastElem
 }
 
-func (s *Stack) prepend(elem string) {
+func (s *Deque) removeFirst() string {
+	firstElem := s.elements[0]
+	s.elements = s.elements[1:len(s.elements)]
+	return firstElem
+}
+
+func (s *Deque) pushFront(elem string) {
 	s.elements = append([]string{elem}, s.elements...)
 }
 
-func (s *Stack) push(elem string) {
+func (s *Deque) pushBack(elem string) {
 	s.elements = append(s.elements, elem)
 }
 
-func (s *Stack) top() string {
-	return s.elements[0]
+func (s *Deque) top() string {
+	return s.elements[len(s.elements)-1]
 }
 
-func (s *Stack) isEmpty() bool {
+func (s *Deque) isEmpty() bool {
 	return len(s.elements) == 0
 }
 
@@ -39,35 +45,21 @@ func sanitise(elem string) string {
 	return garboCharsRe.ReplaceAllString(elem, "")
 }
 
-func move(stacks []Stack, crates int, fromStack int, toStack int) []Stack {
-
-	fmt.Printf("Moving %d from %d to %d\n", crates, fromStack, toStack)
-	fmt.Println(stacks[fromStack-1])
+func move(stacks []Deque, crates int, fromStack int, toStack int) []Deque {
 
 	for ; crates > 0; crates-- {
-		pop := stacks[fromStack-1].pop()
-		fmt.Printf("pop %s\n", pop)
-
-		stacks[toStack-1].prepend(pop)
+		if !stacks[fromStack].isEmpty() {
+			pop := stacks[fromStack].removeLast()
+			stacks[toStack].pushBack(pop)
+		}
 	}
-
-	prettyPrint(stacks)
 
 	return stacks
 }
 
-func prettyPrint(stacks []Stack) {
-	for _, stack := range stacks {
-		for _, elem := range stack.elements {
-			fmt.Printf("%s,", elem)
-		}
-		fmt.Println()
-	}
-}
-
 func main() {
 
-	stacks := make([]Stack, 20)
+	stacks := make([]Deque, 9)
 
 	inputFile := common.ReadTestFile("day5_input.txt")
 	fileScanner := bufio.NewScanner(inputFile)
@@ -75,7 +67,7 @@ func main() {
 
 	whitespaceRe := regexp.MustCompile("\\s{4}|\\s{1}")
 	digitsRe := regexp.MustCompile("\\d")
-	moveRe := regexp.MustCompile("move (\\d) from (\\d) to (\\d)")
+	moveRe := regexp.MustCompile("move (\\d+) from (\\d+) to (\\d+)")
 
 	for fileScanner.Scan() {
 		line := fileScanner.Text()
@@ -88,7 +80,7 @@ func main() {
 
 			for index, elem := range groups {
 				if elem != "" {
-					stacks[index].push(sanitise(elem))
+					stacks[index].pushFront(sanitise(elem))
 				}
 			}
 		} else {
@@ -99,16 +91,12 @@ func main() {
 				fromStack, _ := strconv.Atoi(matchingGroups[2])
 				toStack, _ := strconv.Atoi(matchingGroups[3])
 
-				stacks = move(stacks, crates, fromStack, toStack)
+				stacks = move(stacks, crates, fromStack-1, toStack-1)
 			}
 		}
 	}
 
-	prettyPrint(stacks)
-
 	for _, stack := range stacks {
-		if len(stack.elements) > 0 {
-			fmt.Printf("%s", stack.top())
-		}
+		fmt.Printf("%s", stack.top())
 	}
 }
