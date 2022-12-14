@@ -1,7 +1,7 @@
 package main
 
 import (
-	common "aoc23/main"
+	common "aoc22/main"
 	"bufio"
 	"fmt"
 )
